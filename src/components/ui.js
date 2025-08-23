@@ -1,10 +1,10 @@
-import { CONFIG, TEXT, getCurrentTheme, switchTheme, loadThemePreference, loadLanguagePreference, saveThemePreference } from '../config';
+import { CONFIG, TEXT } from '../config';
 import { state } from '../core/state';
 import { Utils } from '../utils';
 import { WPlaceService } from '../core/api';
 import { ImageProcessor } from '../lib/imageProcessor';
 import { processImage } from '../core/painter';
-import { ensureToken } from '../core/turnstile';
+import { ensureToken, initializeTokenGenerator } from '../core/turnstile';
 import { overlayManager } from '../core/overlay';
 
 let _updateResizePreview = () => { };
@@ -12,6 +12,57 @@ let _updateResizePreview = () => { };
 export let updateUI = () => { }
 export let updateStats = () => { }
 export let updateDataButtons = () => { }
+
+// --- THEME & LANGUAGE LOGIC (MOVED FROM CONFIG) ---
+export const getCurrentTheme = () => CONFIG.THEMES[CONFIG.currentTheme]
+
+export function saveThemePreference() {
+    try {
+        localStorage.setItem("wplace-theme", CONFIG.currentTheme)
+    } catch (e) {
+        console.warn("Could not save theme preference:", e)
+    }
+}
+
+export function loadThemePreference() {
+    try {
+        const saved = localStorage.getItem("wplace-theme")
+        if (saved && CONFIG.THEMES[saved]) {
+            CONFIG.currentTheme = saved
+        }
+    } catch (e) {
+        console.warn("Could not load theme preference:", e)
+    }
+}
+
+export function loadLanguagePreference() {
+    try {
+        const saved = localStorage.getItem("wplace_language")
+        if (saved && TEXT[saved]) {
+            state.language = saved
+        }
+    } catch (e) {
+        console.warn("Could not load language preference:", e)
+    }
+}
+
+export const switchTheme = (themeName) => {
+    if (CONFIG.THEMES[themeName]) {
+        CONFIG.currentTheme = themeName
+        saveThemePreference()
+
+        // Remove existing theme styles
+        const existingStyle = document.querySelector('style[data-wplace-theme="true"]')
+        if (existingStyle) {
+            existingStyle.remove()
+        }
+
+        // Recreate UI with new theme (cleanup is handled in createUI)
+        createUI()
+    }
+}
+// --- END ---
+
 
 export async function createUI() {
     await Utils.detectLanguage()

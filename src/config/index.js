@@ -1,6 +1,3 @@
-import { state } from '../core/state';
-import { createUI } from '../components/ui';
-
 export const CONFIG = {
     COOLDOWN_DEFAULT: 31000,
     TRANSPARENCY_THRESHOLD: 100,
@@ -160,55 +157,7 @@ export const CONFIG = {
         },
     },
     currentTheme: "Classic Autobot",
-}
-
-export const getCurrentTheme = () => CONFIG.THEMES[CONFIG.currentTheme]
-
-export const switchTheme = (themeName) => {
-    if (CONFIG.THEMES[themeName]) {
-        CONFIG.currentTheme = themeName
-        saveThemePreference()
-
-        // Remove existing theme styles
-        const existingStyle = document.querySelector('style[data-wplace-theme="true"]')
-        if (existingStyle) {
-            existingStyle.remove()
-        }
-
-        // Recreate UI with new theme (cleanup is handled in createUI)
-        createUI()
-    }
-}
-
-export const saveThemePreference = () => {
-    try {
-        localStorage.setItem("wplace-theme", CONFIG.currentTheme)
-    } catch (e) {
-        console.warn("Could not save theme preference:", e)
-    }
-}
-
-export const loadThemePreference = () => {
-    try {
-        const saved = localStorage.getItem("wplace-theme")
-        if (saved && CONFIG.THEMES[saved]) {
-            CONFIG.currentTheme = saved
-        }
-    } catch (e) {
-        console.warn("Could not load theme preference:", e)
-    }
-}
-
-export const loadLanguagePreference = () => {
-    try {
-        const saved = localStorage.getItem("wplace_language")
-        if (saved && TEXT[saved]) {
-            state.language = saved
-        }
-    } catch (e) {
-        console.warn("Could not load language preference:", e)
-    }
-}
+};
 
 // BILINGUAL TEXT STRINGS:)
 export const TEXT = {
@@ -950,4 +899,36 @@ export const TEXT = {
         automation: "자동화",
         noChargesThreshold: "⌛ 횟수가 {threshold} 에 도달할 때까지 대기 중. 현재 {current}. 다음 {time} 후...",
     },
+};
+
+export const getCurrentTheme = () => CONFIG.THEMES[CONFIG.currentTheme];
+
+export function saveThemePreference() {
+    try {
+        localStorage.setItem("wplace-theme", CONFIG.currentTheme)
+    } catch (e) {
+        console.warn("Could not save theme preference:", e)
+    }
+}
+
+export function loadThemePreference() {
+    try {
+        const saved = localStorage.getItem("wplace-theme")
+        if (saved && CONFIG.THEMES[saved]) {
+            CONFIG.currentTheme = saved
+        }
+    } catch (e) {
+        console.warn("Could not load theme preference:", e)
+    }
+}
+
+export function loadLanguagePreference() {
+    try {
+        const saved = localStorage.getItem("wplace_language")
+        if (saved && TEXT[saved]) {
+            state.language = saved
+        }
+    } catch (e) {
+        console.warn("Could not load language preference:", e)
+    }
 }
