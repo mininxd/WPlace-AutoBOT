@@ -8,7 +8,7 @@ export default defineConfig({
       formats: ['iife'],
       name: 'AutoImage',
     },
-    outDir: 'dist',
+    outDir: './',
     minify: true,
     rollupOptions: {
       output: {
