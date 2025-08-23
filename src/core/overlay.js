@@ -243,3 +243,5 @@ export class OverlayManager {
         });
     }
 }
+
+export const overlayManager = new OverlayManager();
